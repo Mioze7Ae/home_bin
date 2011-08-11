@@ -1,0 +1,8 @@
+#!/bin/bash
+
+tag=$(basename $(pwd))-$(date +%Y%m%d-%H%M)
+zip -rn .zip:.apk -r tmp-$tag.zip \
+    META-INF $* \
+    -x '*~' '#*' .gitignore
+/usr/lib/jvm/java-6-sun/bin/java -classpath ~/bin/testsign.jar testsign $(pwd -P)/{tmp-,}$tag.zip
+rm tmp-$tag.zip

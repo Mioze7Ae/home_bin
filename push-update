@@ -1,0 +1,5 @@
+#!/bin/bash
+
+adb push $1 /sdcard/OpenRecovery/updates/$(basename $1)
+adb shell md5sum /sdcard/OpenRecovery/updates/$(basename $1)
+md5sum $1

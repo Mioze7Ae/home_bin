@@ -1,0 +1,2 @@
+#!/bin/bash
+openssl pkcs7 -inform DER -in "$*" -noout -print_certs -text

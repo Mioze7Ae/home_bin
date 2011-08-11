@@ -1,0 +1,12 @@
+#!/bin/bash
+
+root=$(cd ~/bin/sign; pwd -P)
+
+[[ -r $1 ]] || exit 1
+file=$1
+output=$2
+file=$(cd $(dirname $file); pwd -P)/$(basename $file)
+output=$(cd $(dirname $output); pwd -P)/$(basename $output)
+cd $root
+[[ -r $file ]] || exit 1
+java -jar signapk.jar testkey.x509.pem testkey.pk8 $file $output

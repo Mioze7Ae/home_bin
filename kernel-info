@@ -1,0 +1,35 @@
+#!/bin/sh
+# ----------------------------------------------------------------------
+# extract-ikconfig - Extract the .config file from a kernel image
+#
+# This will only work when the kernel was compiled with CONFIG_IKCONFIG.
+#
+# The obscure use of the "tr" filter is to work around older versions of
+# "grep" that report the byte offset of the line instead of the pattern.
+#
+# (c) 2009,2010 Dick Streefland <dick@streefland.net>
+# Licensed under the terms of the GNU General Public License.
+# ----------------------------------------------------------------------
+
+try_decompress()
+{
+	for	pos in `tr "$1\n$2" "\n$2=" < "$img" | grep -abo "^$2"`
+	do
+		pos=${pos%%:*}
+		tail -c+$pos "$img" | $3 2>/dev/null | strings | grep '^Linux version'
+	done
+}
+
+# Check invocation:
+me=${0##*/}
+img=$1
+if	[ $# -ne 1 -o ! -s "$img" ]
+then
+	echo "Usage: $me <kernel-image>" >&2
+	exit 2
+fi
+
+try_decompress '\037\213\010' xy  gunzip
+try_decompress 'BZh'          xy  bunzip2
+try_decompress '\135\0\0\0'   xxx unlzma
+try_decompress '\211\114\132' xy  'lzop -d'
